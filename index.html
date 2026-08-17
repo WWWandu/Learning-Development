@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCBA Learning Hours Management Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --cocoa:#39302D; --cocoa-light:#4d4340; --cocoa-dark:#271f1d;
+  --sky:#3AB3E5; --sky-light:#6ac6ec; --sky-dark:#1d93c5; --sky-soft:#e8f6fd;
+  --coral:#E4032C; --coral-light:#fdeaea;
+  --sun:#F8E200; --sun-soft:#fffbe0;
+  --passion:#9F197E; --passion-soft:#f8edf5;
+  --med:#00A8A9; --med-light:#e0f7f7;
+  --bg:#F7F6F4; --surface:#FFFFFF;
+  --border:#E5E2DE; --border-dark:#d0ccc8;
+  --text-primary:#1a1614; --text-secondary:#6b6460; --text-muted:#9e9894;
+  --sidebar-w:240px; --header-h:64px;
+  --radius:10px; --radius-lg:14px;
+  --shadow:0 1px 3px rgba(57,48,45,.08),0 4px 12px rgba(57,48,45,.04);
+  --shadow-md:0 4px 16px rgba(57,48,45,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4,h5{font-family:'Outfit',sans-serif}
+.app-shell{display:flex;height:100vh;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar-w);background:var(--cocoa);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;z-index:10}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.logo-mark{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--sky);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;color:white}
+.logo-text{color:white;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;line-height:1.3}
+.logo-sub{font-size:10px;font-weight:400;color:rgba(255,255,255,.4);letter-spacing:.5px;text-transform:uppercase}
+
+.role-badge{margin:10px 14px;background:rgba(58,179,229,.12);border:1px solid rgba(58,179,229,.25);border-radius:8px;padding:8px 12px}
+.role-badge-label{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.role-badge-value{color:var(--sky);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.role-dot{width:7px;height:7px;border-radius:50%;background:var(--sky)}
+
+.nav-section{padding:14px 14px 4px}
+.nav-section-label{font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.8px;font-weight:500;margin-bottom:4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.6);font-size:13px;transition:all .15s;margin-bottom:2px;position:relative}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.nav-item.active{background:rgba(58,179,229,.15);color:var(--sky);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--sky);border-radius:0 2px 2px 0}
+.nav-icon{font-size:15px}
+.nav-badge-pill{margin-left:auto;background:var(--coral);color:white;font-size:10px;font-weight:600;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
+.nav-badge-pill.warn{background:var(--sun);color:var(--cocoa)}
+
+.sidebar-footer{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.08)}
+.user-pill{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.06);cursor:pointer}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--sky);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0}
+.user-name{font-size:12px;font-weight:500;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-dept{font-size:10px;color:rgba(255,255,255,.4)}
+
+/* ── Topbar ── */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
+.topbar-title{font-family:'Outfit',sans-serif;font-size:18px;font-weight:600;color:var(--cocoa)}
+.topbar-breadcrumb{font-size:12px;color:var(--text-muted)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.icon-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);font-size:16px;transition:all .15s;position:relative}
+.icon-btn:hover{background:var(--bg)}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--coral);border:1.5px solid white}
+.content-area{flex:1;overflow-y:auto;padding:24px}
+
+/* ── Cards ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--cocoa)}
+.card-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-card.sky::before{background:var(--sky)}
+.kpi-card.med::before{background:var(--med)}
+.kpi-card.passion::before{background:var(--passion)}
+.kpi-card.coral::before{background:var(--coral)}
+.kpi-card.sun::before{background:var(--sun)}
+.kpi-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.kpi-value{font-family:'Outfit',sans-serif;font-size:28px;font-weight:700;color:var(--cocoa);line-height:1.1}
+.kpi-sub{font-size:12px;color:var(--text-muted);margin-top:6px}
+.kpi-trend-up{color:var(--med);font-weight:600}
+.kpi-trend-down{color:var(--coral);font-weight:600}
+.kpi-icon{position:absolute;right:16px;top:16px;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.kpi-icon.sky{background:var(--sky-soft);color:var(--sky-dark)}
+.kpi-icon.med{background:var(--med-light);color:#007b7c}
+.kpi-icon.passion{background:var(--passion-soft);color:var(--passion)}
+.kpi-icon.coral{background:var(--coral-light);color:var(--coral)}
+.kpi-icon.sun{background:var(--sun-soft);color:#8a7500}
+
+/* ── Status Chips ── */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.chip-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.chip-pending{background:var(--sun-soft);color:#8a7500}
+.chip-approved{background:var(--med-light);color:#007b7c}
+.chip-rejected{background:var(--coral-light);color:var(--coral)}
+.chip-returned{background:var(--passion-soft);color:var(--passion)}
+.chip-draft{background:var(--bg);color:var(--text-secondary)}
+.chip-info{background:var(--sky-soft);color:var(--sky-dark)}
+.chip-group{background:#f0eaff;color:#6b35b0}
+
+/* ── Forms ── */
+.form-group{margin-bottom:18px}
+.form-label{font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:block}
+.form-label .required{color:var(--coral)}
+.form-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text-primary);background:var(--surface);font-family:'Plus Jakarta Sans',sans-serif;transition:border-color .15s,box-shadow .15s;outline:none}
+.form-input:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(58,179,229,.12)}
+.form-select{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text-primary);background:var(--surface);font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6460' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.form-select:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(58,179,229,.12)}
+.form-textarea{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif;outline:none;resize:vertical;transition:border-color .15s}
+.form-textarea:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(58,179,229,.12)}
+
+/* ── Training Type Toggle ── */
+.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.type-card{border:2px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s;background:var(--surface);text-align:center}
+.type-card:hover{border-color:var(--sky-light);background:var(--sky-soft)}
+.type-card.selected{border-color:var(--sky);background:var(--sky-soft)}
+.type-card-icon{font-size:28px;margin-bottom:8px}
+.type-card-title{font-weight:600;font-size:14px;color:var(--cocoa);margin-bottom:3px}
+.type-card-desc{font-size:11px;color:var(--text-muted);line-height:1.4}
+
+/* ── Approver Search ── */
+.approver-search-wrap{position:relative}
+.approver-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-md);z-index:50;max-height:220px;overflow-y:auto;display:none}
+.approver-dropdown.open{display:block}
+.approver-option{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .12s;border-bottom:1px solid var(--border)}
+.approver-option:last-child{border-bottom:none}
+.approver-option:hover{background:var(--sky-soft)}
+.approver-avatar{width:32px;height:32px;border-radius:50%;background:var(--sky-soft);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--sky-dark);flex-shrink:0}
+.approver-name{font-size:13px;font-weight:500;color:var(--text-primary)}
+.approver-role-tag{font-size:11px;color:var(--text-muted)}
+.approver-selected{display:none;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--sky);border-radius:8px;background:var(--sky-soft);margin-top:6px}
+.approver-selected.show{display:flex}
+
+/* ── Upload Zone ── */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:28px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface)}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--sky);background:var(--sky-soft)}
+.upload-zone-icon{font-size:32px;margin-bottom:10px}
+.upload-zone-text{font-size:14px;font-weight:500;color:var(--text-secondary)}
+.upload-zone-hint{font-size:12px;color:var(--text-muted);margin-top:4px}
+.upload-file-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-top:10px}
+.upload-file-icon{font-size:20px}
+.upload-file-info{flex:1;min-width:0}
+.upload-file-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upload-file-size{font-size:11px;color:var(--text-muted)}
+
+/* ── Step Indicator ── */
+.step-indicator{display:flex;align-items:flex-start;margin-bottom:28px;gap:0}
+.step-item{display:flex;align-items:center;flex:1}
+.step-wrapper{display:flex;flex-direction:column;align-items:center;gap:4px}
+.step-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.step-circle.done{background:var(--med);color:white}
+.step-circle.active{background:var(--sky);color:white}
+.step-circle.pending{background:var(--border);color:var(--text-muted)}
+.step-label{font-size:10px;font-weight:500;text-align:center}
+.step-label.active{color:var(--sky)}
+.step-label.done{color:var(--med)}
+.step-label.pending{color:var(--text-muted)}
+.step-line{flex:1;height:1px;background:var(--border);margin-top:-16px}
+.step-line.done{background:var(--med)}
+
+/* ── Group Upload Preview Table ── */
+.preview-table{width:100%;border-collapse:collapse;font-size:13px}
+.preview-table th{background:var(--bg);padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
+.preview-table td{padding:10px 12px;border-bottom:1px solid var(--border)}
+.preview-table tr:last-child td{border-bottom:none}
+.preview-table tr:hover td{background:rgba(58,179,229,.03)}
+
+/* ── Data Table ── */
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;border-bottom:1px solid var(--border);text-align:left;background:var(--bg)}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(58,179,229,.02)}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none}
+.btn-primary{background:var(--sky);color:white}
+.btn-primary:hover{background:var(--sky-dark);transform:translateY(-1px)}
+.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text-primary)}
+.btn-secondary:hover{background:var(--bg)}
+.btn-danger{background:var(--coral-light);color:var(--coral);border:1px solid rgba(228,3,44,.2)}
+.btn-success{background:var(--med-light);color:#007b7c;border:1px solid rgba(0,168,169,.2)}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-lg{padding:13px 28px;font-size:15px}
+.btn-full{width:100%}
+
+/* ── Alert Boxes ── */
+.alert{border-radius:var(--radius);padding:12px 16px;font-size:12px;margin-bottom:14px}
+.alert-info{background:var(--sky-soft);border:1px solid rgba(58,179,229,.2);color:var(--sky-dark)}
+.alert-warn{background:var(--sun-soft);border:1px solid rgba(248,226,0,.4);color:#8a7500}
+.alert-success{background:var(--med-light);border:1px solid rgba(0,168,169,.2);color:#007b7c}
+.alert-group{background:#f0eaff;border:1px solid rgba(107,53,176,.2);color:#6b35b0}
+
+/* ── Grids ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-21{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.grid-12{display:grid;grid-template-columns:1fr 2fr;gap:16px}
+
+/* ── Progress ── */
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s}
+.progress-fill.sky{background:var(--sky)}
+.progress-fill.med{background:var(--med)}
+.progress-fill.coral{background:var(--coral)}
+.progress-fill.sun{background:var(--sun)}
+
+/* ── Timeline ── */
+.timeline{display:flex;flex-direction:column}
+.timeline-item{display:flex;gap:14px;padding-bottom:18px;position:relative}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-line-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:28px}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;z-index:1}
+.tl-dot.sky{background:var(--sky)}
+.tl-dot.med{background:var(--med)}
+.tl-dot.coral{background:var(--coral)}
+.tl-dot.muted{background:var(--border);border:2px solid var(--text-muted);background:white}
+.tl-connector{flex:1;width:1px;background:var(--border);margin-top:4px}
+.timeline-item:last-child .tl-connector{display:none}
+.tl-content{flex:1;padding-top:2px}
+.tl-title{font-size:13px;font-weight:500}
+.tl-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
+.tl-body{font-size:12px;color:var(--text-secondary);margin-top:4px;background:var(--bg);padding:8px 10px;border-radius:6px}
+
+/* ── Notifs ── */
+.notif-item{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;position:relative}
+.notif-item:hover{background:var(--bg)}
+.notif-item.unread::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--sky);border-radius:0 2px 2px 0}
+.notif-avatar{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+
+/* ── Competency ── */
+.comp-bar{margin-bottom:14px}
+.comp-header{display:flex;justify-content:space-between;margin-bottom:5px}
+.comp-name{font-size:13px;font-weight:500}
+
+/* ── Tabs ── */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;gap:0}
+.tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab.active{color:var(--sky);border-bottom-color:var(--sky)}
+.tab:hover{color:var(--text-primary)}
+
+/* ── Queue Items ── */
+.queue-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .15s}
+.queue-item:hover{border-color:var(--sky);box-shadow:0 2px 8px rgba(58,179,229,.1)}
+
+/* ── Section Headers ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-family:'Outfit',sans-serif;font-size:17px;font-weight:600;color:var(--cocoa)}
+
+/* ── Misc ── */
+.divider{height:1px;background:var(--border);margin:16px 0}
+.mb-8{margin-bottom:8px}
+.mb-12{margin-bottom:12px}
+.mb-16{margin-bottom:16px}
+.mb-20{margin-bottom:20px}
+.mb-24{margin-bottom:24px}
+.text-muted{color:var(--text-muted)}
+.text-sm{font-size:12px}
+.fw-600{font-weight:600}
+.ml-auto{margin-left:auto}
+.flex{display:flex}
+.flex-center{display:flex;align-items:center}
+.gap-8{gap:8px}
+.gap-12{gap:12px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── Login ── */
+.login-shell{min-height:100vh;display:flex;background:var(--bg)}
+.login-left{width:44%;background:var(--cocoa);display:flex;flex-direction:column;justify-content:center;padding:60px 56px;position:relative;overflow:hidden}
+.login-left::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;border-radius:50%;background:rgba(58,179,229,.08)}
+.login-left::after{content:'';position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:rgba(159,25,126,.1)}
+.login-branding{position:relative;z-index:1}
+.login-logo-icon{width:52px;height:52px;background:var(--sky);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:700;font-size:20px;color:white;margin-bottom:28px}
+.login-headline{font-family:'Outfit',sans-serif;font-size:34px;font-weight:700;color:white;line-height:1.2;margin-bottom:16px}
+.login-sub{color:rgba(255,255,255,.5);font-size:14px;line-height:1.7;max-width:300px}
+.login-features{margin-top:48px;display:flex;flex-direction:column;gap:16px;position:relative;z-index:1}
+.login-feature{display:flex;align-items:flex-start;gap:12px}
+.feature-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.feature-icon.sky{background:rgba(58,179,229,.15);color:var(--sky)}
+.feature-icon.med{background:rgba(0,168,169,.15);color:var(--med)}
+.feature-icon.passion{background:rgba(159,25,126,.15);color:var(--passion)}
+.feature-text{font-size:13px;color:rgba(255,255,255,.55)}
+.feature-title{color:rgba(255,255,255,.9);font-weight:500;margin-bottom:2px;font-size:13px}
+.login-right{flex:1;display:flex;align-items:center;justify-content:center;padding:40px}
+.login-card{width:100%;max-width:420px;background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:40px;box-shadow:var(--shadow-md)}
+.login-card-title{font-family:'Outfit',sans-serif;font-size:24px;font-weight:600;color:var(--cocoa);margin-bottom:4px}
+.login-card-sub{color:var(--text-muted);font-size:13px;margin-bottom:32px}
+
+/* ── Role Cards in Login ── */
+.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.role-card{border:2px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all .2s;text-align:center}
+.role-card:hover{border-color:var(--sky-light);background:var(--sky-soft)}
+.role-card.selected{border-color:var(--sky);background:var(--sky-soft)}
+.role-card-icon{font-size:22px;margin-bottom:6px}
+.role-card-name{font-size:13px;font-weight:600;color:var(--cocoa)}
+.role-card-desc{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+#login-screen{display:block}
+#login-screen.hidden{display:none}
+#app-shell{display:none}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════════ -->
+<div id="login-screen">
+<div class="login-shell">
+  <div class="login-left">
+    <div class="login-branding">
+      <div class="login-logo-icon">NC</div>
+      <div class="login-headline">Learning Hours<br>Management<br>Platform</div>
+      <div class="login-sub">NCBA Bank's centralised platform for learning submissions, approvals, and analytics.</div>
+      <div class="login-features">
+        <div class="login-feature">
+          <div class="feature-icon sky">📋</div>
+          <div><div class="feature-title">Individual & Group Submissions</div><div class="feature-text">Submit your own or bulk-upload group training attendance</div></div>
+        </div>
+        <div class="login-feature">
+          <div class="feature-icon med">✓</div>
+          <div><div class="feature-title">Smart Approval Routing</div><div class="feature-text">Choose your line manager or team lead as approver</div></div>
+        </div>
+        <div class="login-feature">
+          <div class="feature-icon passion">📊</div>
+          <div><div class="feature-title">Live Dashboards</div><div class="feature-text">Real-time team and department-level learning analytics</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-card">
+      <div class="login-card-title">Welcome back</div>
+      <div class="login-card-sub">Sign in with your NCBA Microsoft 365 account</div>
+
+      <div class="form-group">
+        <label class="form-label">Email / Staff ID</label>
+        <input type="text" class="form-input" id="login-email" value="amara.kamau@ncbagroup.com" placeholder="staff@ncbagroup.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">I am signing in as</label>
+        <div class="role-cards">
+          <div class="role-card selected" id="rc-employee" onclick="selectLoginRole('employee')">
+            <div class="role-card-icon">👤</div>
+            <div class="role-card-name">Employee</div>
+            <div class="role-card-desc">All staff including managers</div>
+          </div>
+          <div class="role-card" id="rc-ld" onclick="selectLoginRole('ld')">
+            <div class="role-card-icon">🎓</div>
+            <div class="role-card-name">L&D / Admin</div>
+            <div class="role-card-desc">Learning &amp; Development team</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Employee sub-type (dept head toggle) -->
+      <div id="dept-head-toggle" style="margin-bottom:18px;">
+        <label class="form-label">My access level</label>
+        <select class="form-select" id="emp-subtype" onchange="updateEmpSubtype()">
+          <option value="staff">Staff Member</option>
+          <option value="depthead">Department Head / Team Lead</option>
+        </select>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;margin:0 0 22px;color:var(--text-muted);font-size:12px;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        Single Sign-On via Microsoft
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-full" onclick="launchApp()">
+        🔐 Sign in with Microsoft 365
+      </button>
+      <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--text-muted);">Protected by Azure AD · NCBA Enterprise SSO</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     APP SHELL
+════════════════════════════════════════════ -->
+<div id="app-shell">
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">NC</div>
+        <div><div class="logo-text">NCBA L&D</div><div class="logo-sub">Learning Platform</div></div>
+      </div>
+    </div>
+
+    <div style="padding:10px 14px 0;">
+      <div class="role-badge">
+        <div class="role-badge-label">Signed in as</div>
+        <div class="role-badge-value"><div class="role-dot"></div><span id="nav-role-label">Employee</span></div>
+      </div>
+    </div>
+
+    <div id="nav-menu"></div>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="avatar" id="nav-avatar">AK</div>
+        <div style="flex:1;min-width:0;">
+          <div class="user-name" id="nav-username">Amara Kamau</div>
+          <div class="user-dept" id="nav-dept">Retail Banking</div>
+        </div>
+        <div style="color:rgba(255,255,255,.3);font-size:12px;" onclick="logout()">⏏</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main-area">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">My Dashboard</div>
+        <div class="topbar-breadcrumb" id="topbar-breadcrumb">Home / Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="icon-btn" onclick="showScreen('notifications')">🔔<div class="notif-dot"></div></div>
+        <div class="icon-btn">❓</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;">
+          <div class="avatar" style="width:28px;height:28px;font-size:11px;" id="topbar-avatar">AK</div>
+          <span style="font-size:13px;font-weight:500;" id="topbar-username">Amara Kamau</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-area" id="content-area"></div>
+  </div>
+</div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────
+let currentRole = 'employee';
+let empSubtype  = 'staff';  // 'staff' | 'depthead'
+let currentScreen = 'dashboard';
+let loginRole = 'employee';
+
+const APPROVERS = [
+  { id:'DO', name:'David Ochieng',  role:'Line Manager — Retail Banking Head',     initials:'DO', dept:'Retail Banking' },
+  { id:'SW', name:'Sarah Wangari',  role:'Team Lead — Digital Products',           initials:'SW', dept:'Digital Banking' },
+  { id:'JK', name:'James Kamande',  role:'Line Manager — SME Banking',             initials:'JK', dept:'SME Banking' },
+  { id:'PN', name:'Priscilla Ndung\'u', role:'Team Lead — Treasury Operations',   initials:'PN', dept:'Treasury' },
+  { id:'MO', name:'Martin Otieno',  role:'Department Head — Risk & Compliance',    initials:'MO', dept:'Risk & Compliance' },
+  { id:'GM', name:'Grace Mwangi',   role:'L&D Manager',                            initials:'GM', dept:'L&D' },
+];
+
+const SUBMISSIONS = [
+  { id:'SUB-001', name:'Design Thinking Workshop',     type:'External', trainingType:'individual', date:'2025-05-10', hours:8,  competency:'Innovation & Creativity',  cost:45000, status:'approved',  approverId:'DO', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
+  { id:'SUB-002', name:'Financial Modelling Masterclass', type:'External', trainingType:'individual', date:'2025-05-18', hours:16, competency:'Financial Acumen', cost:85000, status:'pending',  approverId:'DO', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
+  { id:'SUB-003', name:'Leadership Fundamentals',      type:'L&D-Led',  trainingType:'individual', date:'2025-04-22', hours:12, competency:'Leadership & Management',  cost:0,     status:'approved',  approverId:'DO', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
+  { id:'SUB-004', name:'Excel Advanced Analytics',     type:'Dept-Led', trainingType:'individual', date:'2025-04-08', hours:4,  competency:'Digital Literacy',         cost:0,     status:'returned',  approverId:'SW', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
+  { id:'SUB-005', name:'Customer Service Bootcamp',    type:'External', trainingType:'group',      date:'2025-04-18', hours:6,  competency:'Customer Centricity',      cost:120000,status:'approved',  approverId:'DO', submittedBy:'Faith Njeri',   dept:'Digital Banking', group:true, participants:14 },
+  { id:'SUB-006', name:'Risk Awareness Workshop',      type:'L&D-Led',  trainingType:'group',      date:'2025-03-28', hours:4,  competency:'Risk & Compliance',        cost:0,     status:'approved',  approverId:'MO', submittedBy:'Brian Muthoni', dept:'Risk & Compliance', group:true, participants:22 },
+  { id:'SUB-007', name:'Python for Banking Analytics', type:'External', trainingType:'individual', date:'2025-05-25', hours:24, competency:'Digital Literacy',         cost:120000,status:'pending',  approverId:'DO', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
+];
+
+const DEPT_MEMBERS = [
+  { name:'Amara Kamau',   email:'amara.kamau@ncbagroup.com',    hours:39, target:40, status:'on-track',  dept:'Retail Banking' },
+  { name:'Brian Muthoni', email:'brian.muthoni@ncbagroup.com',  hours:28, target:40, status:'at-risk',   dept:'Retail Banking' },
+  { name:'Carol Omondi',  email:'carol.omondi@ncbagroup.com',   hours:45, target:40, status:'compliant', dept:'Retail Banking' },
+  { name:'Diana Njeri',   email:'diana.njeri@ncbagroup.com',    hours:32, target:40, status:'on-track',  dept:'Retail Banking' },
+  { name:'Edwin Wahu',    email:'edwin.wahu@ncbagroup.com',     hours:18, target:40, status:'at-risk',   dept:'Retail Banking' },
+  { name:'Faith Kiprop',  email:'faith.kiprop@ncbagroup.com',   hours:52, target:40, status:'compliant', dept:'Retail Banking' },
+  { name:'George Mwangi', email:'george.mwangi@ncbagroup.com',  hours:22, target:40, status:'at-risk',   dept:'Digital Banking' },
+  { name:'Helen Otieno',  email:'helen.otieno@ncbagroup.com',   hours:35, target:40, status:'on-track',  dept:'Digital Banking' },
+];
+
+// ─── Login ───────────────────────────────────────────
+function selectLoginRole(role) {
+  loginRole = role;
+  document.getElementById('rc-employee').classList.toggle('selected', role==='employee');
+  document.getElementById('rc-ld').classList.toggle('selected', role==='ld');
+  document.getElementById('dept-head-toggle').style.display = role==='employee' ? 'block' : 'none';
+}
+
+function updateEmpSubtype() {
+  empSubtype = document.getElementById('emp-subtype').value;
+}
+
+function launchApp() {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app-shell').style.display = 'block';
+  currentRole = loginRole;
+  empSubtype  = (loginRole==='employee') ? (document.getElementById('emp-subtype').value) : 'admin';
+  applyRoleProfile();
+  showScreen(currentRole==='ld' ? 'validation-queue' : 'dashboard');
+}
+
+function logout() {
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('app-shell').style.display = 'none';
+}
+
+// ─── Role Profiles ────────────────────────────────────
+const PROFILES = {
+  employee_staff: { name:'Amara Kamau',  initials:'AK', dept:'Retail Banking', roleLabel:'Employee' },
+  employee_depthead: { name:'David Ochieng', initials:'DO', dept:'Retail Banking Head', roleLabel:'Dept Head' },
+  ld: { name:'Grace Mwangi', initials:'GM', dept:'L&D Department', roleLabel:'L&D Administrator' },
+};
+
+function applyRoleProfile() {
+  const key = currentRole==='ld' ? 'ld' : `employee_${empSubtype}`;
+  const p = PROFILES[key] || PROFILES['employee_staff'];
+  document.getElementById('nav-avatar').textContent    = p.initials;
+  document.getElementById('nav-username').textContent  = p.name;
+  document.getElementById('nav-dept').textContent      = p.dept;
+  document.getElementById('topbar-avatar').textContent = p.initials;
+  document.getElementById('topbar-username').textContent = p.name;
+  document.getElementById('nav-role-label').textContent = p.roleLabel;
+  renderNav();
+}
+
+// ─── Navigation ───────────────────────────────────────
+function renderNav() {
+  let sections = [];
+  if (currentRole === 'ld') {
+    sections = [
+      { label:'Administration', items:[
+        { id:'validation-queue', icon:'✅', label:'Validation Queue', badge:'8' },
+        { id:'lms-upload',       icon:'⬆️', label:'LMS Upload' },
+        { id:'attendee-upload',  icon:'📋', label:'Attendee Upload' },
+      ]},
+      { label:'Analytics', items:[
+        { id:'analytics', icon:'📊', label:'Analytics Dashboard' },
+        { id:'audit-trail', icon:'🔍', label:'Audit Trail' },
+        { id:'notifications', icon:'🔔', label:'Notifications', badge:'2', badgeClass:'warn' },
+      ]}
+    ];
+  } else if (empSubtype === 'depthead') {
+    sections = [
+      { label:'My Learning', items:[
+        { id:'dashboard', icon:'🏠', label:'My Dashboard' },
+        { id:'submit',    icon:'➕', label:'Submit Training' },
+        { id:'history',   icon:'📜', label:'My Submissions' },
+        { id:'competencies', icon:'🎯', label:'Competencies' },
+      ]},
+      { label:'Team Oversight', items:[
+        { id:'team-dashboard', icon:'📈', label:'Team Dashboard' },
+        { id:'notifications',  icon:'🔔', label:'Notifications', badge:'3' },
+      ]}
+    ];
+  } else {
+    sections = [
+      { label:'My Learning', items:[
+        { id:'dashboard', icon:'🏠', label:'My Dashboard' },
+        { id:'submit',    icon:'➕', label:'Submit Training' },
+        { id:'history',   icon:'📜', label:'My Submissions' },
+        { id:'competencies', icon:'🎯', label:'Competencies' },
+      ]},
+      { label:'More', items:[
+        { id:'notifications', icon:'🔔', label:'Notifications', badge:'3' },
+      ]}
+    ];
+  }
+
+  let html = '';
+  sections.forEach(sec => {
+    html += `<div class="nav-section"><div class="nav-section-label">${sec.label}</div>`;
+    sec.items.forEach(item => {
+      const badge = item.badge ? `<span class="nav-badge-pill ${item.badgeClass||''}">${item.badge}</span>` : '';
+      html += `<div class="nav-item ${currentScreen===item.id?'active':''}" onclick="showScreen('${item.id}')">
+        <span class="nav-icon">${item.icon}</span><span>${item.label}</span>${badge}
+      </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('nav-menu').innerHTML = html;
+}
+
+const SCREEN_TITLES = {
+  dashboard:        ['My Dashboard',          'Home / Dashboard'],
+  submit:           ['Submit Training',       'Home / Submit Training'],
+  history:          ['My Submissions',        'Home / Submissions'],
+  competencies:     ['Competency Tracker',    'Home / Competencies'],
+  'team-dashboard': ['Team Dashboard',        'Team / Overview'],
+  'validation-queue':['Validation Queue',     'Admin / Validation'],
+  'lms-upload':     ['LMS Report Upload',     'Admin / LMS Upload'],
+  'attendee-upload':['Attendee List Upload',  'Admin / Attendee Upload'],
+  analytics:        ['Analytics Dashboard',   'Analytics / Overview'],
+  'audit-trail':    ['Audit Trail',           'Admin / Audit'],
+  notifications:    ['Notifications',         'Home / Notifications'],
+};
+
+function showScreen(id) {
+  currentScreen = id;
+  renderNav();
+  const [title, crumb] = SCREEN_TITLES[id] || ['Dashboard', 'Home'];
+  document.getElementById('topbar-title').textContent      = title;
+  document.getElementById('topbar-breadcrumb').textContent = crumb;
+
+  const map = {
+    dashboard:         renderDashboard,
+    submit:            renderSubmit,
+    history:           renderHistory,
+    competencies:      renderCompetencies,
+    'team-dashboard':  renderTeamDashboard,
+    'validation-queue':renderValidationQueue,
+    'lms-upload':      renderLmsUpload,
+    'attendee-upload': renderAttendeeUpload,
+    analytics:         renderAnalytics,
+    'audit-trail':     renderAuditTrail,
+    notifications:     renderNotifications,
+  };
+  if (map[id]) map[id](); else document.getElementById('content-area').innerHTML = '<div class="card"><div class="card-title">Coming soon</div></div>';
+}
+
+// ─── Helpers ──────────────────────────────────────────
+function statusChip(s) {
+  const m = { approved:['chip-approved','✓ Approved'], pending:['chip-pending','⏳ Pending'], rejected:['chip-rejected','✕ Rejected'], returned:['chip-returned','↩ Returned'], draft:['chip-draft','✎ Draft'] };
+  const [cls, lbl] = m[s] || ['chip-draft', s];
+  return `<span class="chip ${cls}"><span class="chip-dot"></span>${lbl}</span>`;
+}
+function approverById(id) { return APPROVERS.find(a=>a.id===id) || {name:'—',role:'—',initials:'?'}; }
+function mySubmissions() { return SUBMISSIONS.filter(s=>s.submittedBy==='Amara Kamau'); }
+
+// ─── SCREEN: EMPLOYEE DASHBOARD ───────────────────────
+function renderDashboard() {
+  const mine = mySubmissions();
+  const approved = mine.filter(s=>s.status==='approved');
+  const totalHrs = approved.reduce((a,b)=>a+b.hours,0);
+  document.getElementById('content-area').innerHTML = `
+  <div class="kpi-grid">
+    <div class="kpi-card sky"><div class="kpi-icon sky">⏰</div><div class="kpi-label">Total Hours YTD</div><div class="kpi-value">${totalHrs}</div><div class="kpi-sub">Target: <span style="color:var(--sky);font-weight:600;">40 hrs</span></div></div>
+    <div class="kpi-card med"><div class="kpi-icon med">🎓</div><div class="kpi-label">Competencies</div><div class="kpi-value">4/8</div><div class="kpi-sub">50% coverage</div></div>
+    <div class="kpi-card passion"><div class="kpi-icon passion">📋</div><div class="kpi-label">Submissions</div><div class="kpi-value">${mine.length}</div><div class="kpi-sub">${approved.length} approved · ${mine.filter(s=>s.status==='pending').length} pending</div></div>
+    <div class="kpi-card sun"><div class="kpi-icon sun">🏅</div><div class="kpi-label">Team Ranking</div><div class="kpi-value">#3</div><div class="kpi-sub">Retail Banking</div></div>
+  </div>
+
+  <div class="grid-21 mb-16">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">My Learning Journey — 2025</div><div class="card-subtitle">Monthly approved hours</div></div><button class="btn btn-primary btn-sm" onclick="showScreen('submit')">+ Submit Training</button></div>
+      <div style="position:relative;height:200px;"><canvas id="myHoursChart" role="img" aria-label="Personal monthly hours 2025">Monthly hours 2025.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Hours by Type</div></div>
+      <div style="position:relative;height:160px;margin-top:8px;"><canvas id="catChart" role="img" aria-label="Training type breakdown">Type breakdown.</canvas></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#3AB3E5;display:inline-block;"></span>External</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#00A8A9;display:inline-block;"></span>L&D-Led</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;background:#9F197E;display:inline-block;"></span>Group</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title">Recent Submissions</div><button class="btn btn-secondary btn-sm" onclick="showScreen('history')">View all →</button></div>
+    <table class="data-table">
+      <thead><tr><th>Training</th><th>Date</th><th>Hrs</th><th>Type</th><th>Approver</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        ${mine.slice(0,4).map(s=>{
+          const ap = approverById(s.approverId);
+          return `<tr>
+            <td><div style="font-weight:500;">${s.name}</div><div class="text-sm text-muted">${s.group?'👥 Group':'👤 Individual'}</div></td>
+            <td class="text-muted">${s.date}</td>
+            <td><strong>${s.hours}h</strong></td>
+            <td><span class="chip chip-info" style="font-size:11px;">${s.type}</span></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div class="avatar" style="width:24px;height:24px;font-size:9px;">${ap.initials}</div>
+                <span style="font-size:12px;">${ap.name.split(' ')[0]}</span>
+              </div>
+            </td>
+            <td>${statusChip(s.status)}</td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showDetail('${s.id}')">View</button></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+  setTimeout(()=>{
+    if(document.getElementById('myHoursChart')){
+      new Chart(document.getElementById('myHoursChart'),{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{label:'Hours',data:[3,8,3,15,8],borderColor:'#3AB3E5',backgroundColor:'rgba(58,179,229,.08)',fill:true,tension:.4,pointBackgroundColor:'#3AB3E5',pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.04)'}},x:{grid:{display:false}}}}});
+    }
+    if(document.getElementById('catChart')){
+      new Chart(document.getElementById('catChart'),{type:'doughnut',data:{labels:['External','L&D-Led','Group','Dept-Led'],datasets:[{data:[29,12,8,4],backgroundColor:['#3AB3E5','#00A8A9','#9F197E','#F8E200'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'62%'}});
+    }
+  },50);
+}
+
+// ─── SCREEN: SUBMIT TRAINING ──────────────────────────
+let submitStep = 1;
+let trainingMode = '';   // 'individual' | 'group'
+let selectedApproverId = '';
+let groupFileUploaded = false;
+
+function renderSubmit() {
+  submitStep = 1; trainingMode = ''; selectedApproverId = ''; groupFileUploaded = false;
+  renderSubmitStep();
+}
+
+function renderSubmitStep() {
+  const steps = ['Training Type','Details & Approver','Evidence & Cost','Review & Submit'];
+  const stepHTML = steps.map((s,i)=>{
+    const n=i+1, cls = n<submitStep?'done':n===submitStep?'active':'pending';
+    return `<div class="step-item">
+      <div class="step-wrapper">
+        <div class="step-circle ${cls}">${n<submitStep?'✓':n}</div>
+        <div class="step-label ${cls}">${s}</div>
+      </div>
+      ${i<steps.length-1?`<div class="step-line ${n<submitStep?'done':''}"></div>`:''}
+    </div>`;
+  }).join('');
+
+  let body = '';
+
+  // ── STEP 1: Training Type ──
+  if(submitStep===1){
+    body=`
+    <div style="margin-bottom:10px;font-size:14px;color:var(--text-secondary);font-weight:500;">Was this training attended individually, or by a group of employees?</div>
+    <div class="type-toggle">
+      <div class="type-card ${trainingMode==='individual'?'selected':''}" id="tc-individual" onclick="selectTrainingMode('individual')">
+        <div class="type-card-icon">👤</div>
+        <div class="type-card-title">Individual Training</div>
+        <div class="type-card-desc">You attended this training on your own</div>
+      </div>
+      <div class="type-card ${trainingMode==='group'?'selected':''}" id="tc-group" onclick="selectTrainingMode('group')">
+        <div class="type-card-icon">👥</div>
+        <div class="type-card-title">Group / Branch Training</div>
+        <div class="type-card-desc">Multiple employees attended — submit on behalf of the group</div>
+      </div>
+    </div>
+    ${trainingMode==='group'?`
+    <div class="alert alert-group">
+      <strong>👥 Group Submission:</strong> You'll enter the training title and upload an attendance file. Hours will be automatically assigned to each participant's profile using their email address as the unique identifier.
+    </div>`:trainingMode==='individual'?`
+    <div class="alert alert-info">
+      <strong>👤 Individual Submission:</strong> Fill in your training details and upload your certificate or evidence.
+    </div>`:''}`;
+
+  // ── STEP 2: Details & Approver ──
+  } else if(submitStep===2){
+    if(trainingMode==='group'){
+      body=`
+      <div class="alert alert-group" style="margin-bottom:16px;">
+        <strong>👥 Group / Branch Training</strong> — Upload your attendance file below. The system will route the training record to each participant automatically.
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Training / Programme Title <span class="required">*</span></label>
+        <input type="text" class="form-input" id="f-title" placeholder="e.g. Customer Excellence Bootcamp — Nairobi Branch" value="">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Training Date <span class="required">*</span></label>
+        <div class="grid-2" style="gap:10px;">
+          <input type="date" class="form-input" value="2025-05-28">
+          <select class="form-select"><option>In-Person / Classroom</option><option>Virtual / Online</option><option>Blended</option></select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Upload Attendance File <span class="required">*</span></label>
+        <div class="alert alert-info" style="margin-bottom:10px;">
+          <strong>Required columns:</strong> Participant Name · Participant Email Address · Hours Attained<br>
+          Email is the unique identifier — the system will automatically route records to each person's profile.
+        </div>
+        <div style="margin-bottom:10px;">
+          <a href="#" onclick="fakeDownloadTemplate()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--sky-dark);background:var(--sky-soft);text-decoration:none;">
+            📥 Download Attendance Template (.xlsx)
+          </a>
+        </div>
+        <div class="upload-zone" id="group-upload-zone" onclick="simulateGroupUpload()">
+          <div class="upload-zone-icon">📋</div>
+          <div class="upload-zone-text">Click to upload attendance file</div>
+          <div class="upload-zone-hint">Accepts .XLSX or .CSV · Max 10MB</div>
+        </div>
+        <div id="group-file-preview" style="display:none;"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Approver <span class="required">*</span></label>
+        <div id="approver-search-block">${renderApproverSearch()}</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Additional Notes</label>
+        <textarea class="form-textarea" rows="2" placeholder="Any context about this group training..."></textarea>
+      </div>`;
+    } else {
+      body=`
+      <div class="grid-2 mb-16">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Training Programme Name <span class="required">*</span></label>
+          <input type="text" class="form-input" id="f-title" placeholder="e.g. Advanced Excel for Banking Analytics">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Training Source <span class="required">*</span></label>
+          <select class="form-select">
+            <option>External Provider</option><option>Department-Led</option>
+            <option>L&D-Led Programme</option><option>LMS / eLearning</option><option>Virtual / Webinar</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2 mb-16">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Training Date <span class="required">*</span></label>
+          <input type="date" class="form-input" value="2025-05-28">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Duration (Hours) <span class="required">*</span></label>
+          <input type="number" class="form-input" value="8" min=".5" step=".5">
+        </div>
+      </div>
+      <div class="grid-2 mb-16">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Competency Mapped <span class="required">*</span></label>
+          <select class="form-select">
+            <option>— Select —</option><option>Leadership & Management</option><option>Financial Acumen</option>
+            <option selected>Digital Literacy</option><option>Customer Centricity</option>
+            <option>Risk & Compliance</option><option>Innovation & Creativity</option>
+            <option>Communication & Influence</option><option>Operational Excellence</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Training Mode</label>
+          <select class="form-select">
+            <option>In-Person / Classroom</option><option>Virtual / Online</option><option>Self-Paced eLearning</option><option>Blended</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Training Provider / Facilitator</label>
+        <input type="text" class="form-input" placeholder="e.g. Strathmore Business School">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Approver <span class="required">*</span></label>
+        <div class="text-sm text-muted mb-8" style="margin-bottom:8px;">Search for your line manager or team lead / supervisor</div>
+        <div id="approver-search-block">${renderApproverSearch()}</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description / Key Learnings</label>
+        <textarea class="form-textarea" rows="3" placeholder="Briefly describe what you learned and how it applies to your role..."></textarea>
+      </div>`;
+    }
+
+  // ── STEP 3: Evidence & Cost ──
+  } else if(submitStep===3){
+    if(trainingMode==='group'){
+      // Group: evidence is just the attendance file — show summary + optional supporting doc
+      body=`
+      <div class="alert alert-success">
+        <strong>✓ Attendance file uploaded</strong> — 18 participant records loaded and will be automatically attributed.
+      </div>
+      <div class="form-group">
+        <label class="form-label">Supporting Document <span style="color:var(--text-muted);font-weight:400;">(Optional)</span></label>
+        <div class="upload-zone" onclick="">
+          <div class="upload-zone-icon">📎</div>
+          <div class="upload-zone-text">Upload programme brochure, invitation or facilitator credentials</div>
+          <div class="upload-zone-hint">PDF, JPG, PNG · Max 10MB</div>
+        </div>
+      </div>`;
+    } else {
+      body=`
+      <div class="form-group">
+        <label class="form-label">Certificate / Evidence <span class="required">*</span></label>
+        <div class="upload-zone">
+          <div class="upload-zone-icon">📎</div>
+          <div class="upload-zone-text">Click to upload or drag & drop</div>
+          <div class="upload-zone-hint">Certificate, attendance register, completion screenshot · PDF, JPG, PNG · Max 10MB</div>
+        </div>
+        <div class="upload-file-row" style="margin-top:10px;">
+          <div class="upload-file-icon">📄</div>
+          <div class="upload-file-info">
+            <div class="upload-file-name">Certificate_DesignThinking_2025.pdf</div>
+            <div class="upload-file-size">2.3 MB · Uploaded</div>
+          </div>
+          <span style="color:var(--med);font-weight:700;">✓</span>
+        </div>
+      </div>
+      <div class="alert alert-warn">
+        <strong>⚠ Evidence Required:</strong> Upload your certificate, email confirmation, or signed attendance register. Submissions without valid evidence may be returned by your approver.
+      </div>
+      <div class="divider"></div>
+      <div class="form-group"><label class="form-label">Training Cost</label></div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Was there a cost?</label>
+          <select class="form-select"><option>Yes — External Provider</option><option>No — Internal/Free</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Amount (KES)</label>
+          <input type="number" class="form-input" value="45000">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Cost Category</label>
+          <select class="form-select"><option>Tuition / Programme Fees</option><option>Materials</option><option>Travel</option><option>Subscription</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Payment Method</label>
+          <select class="form-select"><option>Personal (to reimburse)</option><option>Company Card</option><option>Direct Invoice</option></select>
+        </div>
+      </div>`;
+    }
+
+  // ── STEP 4: Review ──
+  } else {
+    const ap = approverById(selectedApproverId);
+    body=`
+    <div class="alert alert-success" style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;">✅</span>
+      <div><strong>Ready to submit</strong> — Your record will be routed to <strong>${ap.name}</strong> for approval.</div>
+    </div>
+
+    <div class="card mb-16">
+      <div class="card-title mb-16">📋 Submission Summary</div>
+      <table style="width:100%;font-size:13px;border-collapse:collapse;">
+        ${[
+          ['Training Type', trainingMode==='group'?'👥 Group / Branch Training':'👤 Individual Training'],
+          ['Programme','Advanced Excel for Banking Analytics'],
+          ['Date','28 May 2025'],
+          trainingMode==='individual'?['Duration','8 hours']:['Participants','18 employees (via attendance file)'],
+          trainingMode==='individual'?['Competency','Digital Literacy']:null,
+          trainingMode==='individual'?['Cost','KES 45,000']:null,
+          ['Approver', ap.name + ' — ' + ap.role.split(' — ')[0]],
+        ].filter(Boolean).map(([k,v])=>`
+        <tr>
+          <td style="padding:9px 0;color:var(--text-muted);width:38%;border-bottom:1px solid var(--border);">${k}</td>
+          <td style="padding:9px 0;font-weight:500;border-bottom:1px solid var(--border);">${v}</td>
+        </tr>`).join('')}
+      </table>
+    </div>
+
+    ${trainingMode==='group'?`
+    <div class="card mb-16">
+      <div class="card-title mb-12">👥 Participant Preview</div>
+      <div class="alert alert-group">18 participants loaded from attendance file. Training hours will be posted to each profile automatically upon approval.</div>
+      <table class="preview-table">
+        <thead><tr><th>Participant Name</th><th>Email Address</th><th>Hours</th><th>Status</th></tr></thead>
+        <tbody>
+          ${[['Carol Omondi','carol.omondi@ncbagroup.com',6],['Edwin Wahu','edwin.wahu@ncbagroup.com',6],['Faith Kiprop','faith.kiprop@ncbagroup.com',6],['George Mwangi','george.mwangi@ncbagroup.com',6]].map(([n,e,h])=>`
+          <tr><td>${n}</td><td style="color:var(--sky-dark);">${e}</td><td><strong>${h}h</strong></td><td><span class="chip chip-info">Queued</span></td></tr>`).join('')}
+          <tr><td colspan="4" style="text-align:center;color:var(--text-muted);font-size:12px;padding:10px;">+ 14 more participants</td></tr>
+        </tbody>
+      </table>
+    </div>`:''}
+
+    <div class="alert alert-info">
+      <strong>ℹ️ What happens next?</strong><br>
+      1. Submission sent to <strong>${ap.name}</strong> for approval<br>
+      2. Upon approval, routed to <strong>L&D Admin</strong> for final validation<br>
+      3. Hours posted to ${trainingMode==='group'?'each participant\'s':'your'} Learning Ledger automatically
+    </div>`;
+  }
+
+  const canProceed = submitStep!==1 || trainingMode!=='';
+  document.getElementById('content-area').innerHTML = `
+  <div class="card" style="max-width:760px;margin:0 auto;">
+    <div class="card-header" style="margin-bottom:24px;">
+      <div><div class="card-title" style="font-size:18px;">Submit Training Record</div><div class="card-subtitle">${trainingMode==='group'?'Group / Branch Submission':'Individual Submission'}</div></div>
+      <button class="btn btn-secondary btn-sm" onclick="showScreen('history')">✕ Cancel</button>
+    </div>
+    <div class="step-indicator">${stepHTML}</div>
+    ${body}
+    <div style="display:flex;justify-content:space-between;margin-top:24px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-secondary" onclick="submitBack()" ${submitStep===1?'style="opacity:.3;pointer-events:none;"':''}>← Back</button>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;color:var(--text-muted);">Step ${submitStep} of 4</span>
+        <button class="btn btn-primary" onclick="submitNext()" ${!canProceed?'style="opacity:.4;pointer-events:none;"':''}>${submitStep===4?'✅ Submit for Approval':'Continue →'}</button>
+      </div>
+    </div>
+  </div>`;
+  // Re-attach approver search listeners after DOM update
+  if(submitStep===2) attachApproverListeners();
+}
+
+function renderApproverSearch(){
+  return `<div class="approver-search-wrap" id="approver-wrap">
+    <input type="text" class="form-input" id="approver-input" placeholder="🔍 Type to search — e.g. 'David', 'Team Lead', 'Risk'..." autocomplete="off">
+    <div class="approver-dropdown" id="approver-dropdown">
+      ${APPROVERS.map(a=>`
+      <div class="approver-option" onclick="selectApprover('${a.id}')">
+        <div class="approver-avatar">${a.initials}</div>
+        <div>
+          <div class="approver-name">${a.name}</div>
+          <div class="approver-role-tag">${a.role}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="approver-selected ${selectedApproverId?'show':''}" id="approver-selected">
+      ${selectedApproverId ? renderSelectedApprover(selectedApproverId) : ''}
+    </div>
+  </div>`;
+}
+
+function renderSelectedApprover(id){
+  const a = approverById(id);
+  return `<div class="approver-avatar">${a.initials}</div>
+  <div style="flex:1;">
+    <div style="font-size:13px;font-weight:600;color:var(--sky-dark);">${a.name}</div>
+    <div style="font-size:11px;color:var(--sky-dark);opacity:.8;">${a.role}</div>
+  </div>
+  <button class="btn btn-secondary btn-sm" style="font-size:11px;" onclick="clearApprover()">Change</button>`;
+}
+
+function attachApproverListeners(){
+  const inp = document.getElementById('approver-input');
+  const dd  = document.getElementById('approver-dropdown');
+  if(!inp) return;
+  inp.addEventListener('input', ()=>{
+    const q = inp.value.toLowerCase();
+    dd.querySelectorAll('.approver-option').forEach(opt=>{
+      const txt = opt.textContent.toLowerCase();
+      opt.style.display = txt.includes(q) ? 'flex' : 'none';
+    });
+    dd.classList.toggle('open', inp.value.length>0);
+  });
+  inp.addEventListener('focus', ()=>{ if(inp.value.length===0){ dd.querySelectorAll('.approver-option').forEach(o=>o.style.display='flex'); dd.classList.add('open'); }});
+  document.addEventListener('click', function closeDD(e){ if(!e.target.closest('#approver-wrap')){ dd.classList.remove('open'); document.removeEventListener('click',closeDD); }});
+}
+
+function selectApprover(id){
+  selectedApproverId = id;
+  const dd  = document.getElementById('approver-dropdown');
+  const sel = document.getElementById('approver-selected');
+  const inp = document.getElementById('approver-input');
+  if(dd) dd.classList.remove('open');
+  if(inp) inp.style.display='none';
+  if(sel){ sel.innerHTML = renderSelectedApprover(id); sel.classList.add('show'); }
+}
+
+function clearApprover(){
+  selectedApproverId='';
+  const inp=document.getElementById('approver-input');
+  const sel=document.getElementById('approver-selected');
+  if(inp){ inp.style.display='block'; inp.value=''; inp.focus(); }
+  if(sel){ sel.classList.remove('show'); sel.innerHTML=''; }
+}
+
+function selectTrainingMode(m){
+  trainingMode=m;
+  document.getElementById('tc-individual').classList.toggle('selected',m==='individual');
+  document.getElementById('tc-group').classList.toggle('selected',m==='group');
+  renderSubmitStep(); // re-render to show alert
+}
+
+function simulateGroupUpload(){
+  groupFileUploaded=true;
+  const zone=document.getElementById('group-upload-zone');
+  const preview=document.getElementById('group-file-preview');
+  if(zone) zone.style.display='none';
+  if(preview){
+    preview.style.display='block';
+    preview.innerHTML=`
+    <div class="upload-file-row" style="margin-bottom:10px;">
+      <div class="upload-file-icon">📋</div>
+      <div class="upload-file-info">
+        <div class="upload-file-name">Attendance_CustomerServiceBootcamp_May2025.xlsx</div>
+        <div class="upload-file-size">48 KB · 18 participants detected</div>
+      </div>
+      <span style="color:var(--med);font-weight:700;font-size:18px;">✓</span>
+    </div>
+    <div style="background:var(--med-light);border-radius:8px;padding:10px 14px;font-size:12px;color:#007b7c;display:flex;align-items:center;gap:8px;">
+      <span>✓</span>
+      <div><strong>18 participant records validated.</strong> All emails matched to active NCBA staff directory. Hours will be auto-attributed upon approval.</div>
+    </div>
+    <div style="margin-top:10px;">
+      <table class="preview-table" style="font-size:12px;">
+        <thead><tr><th>Name</th><th>Email</th><th>Hours</th><th>Status</th></tr></thead>
+        <tbody>
+          ${[['Carol Omondi','carol.omondi@ncbagroup.com',6,'✓ Matched'],['Edwin Wahu','edwin.wahu@ncbagroup.com',6,'✓ Matched'],['Faith Kiprop','faith.kiprop@ncbagroup.com',6,'✓ Matched'],['George Mwangi','george.mwangi@ncbagroup.com',6,'✓ Matched']].map(([n,e,h,s])=>`
+          <tr><td>${n}</td><td style="color:var(--sky-dark);">${e}</td><td><strong>${h}h</strong></td><td style="color:var(--med);font-weight:600;">${s}</td></tr>`).join('')}
+          <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:8px;">+ 14 more rows</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+  }
+}
+
+function fakeDownloadTemplate(){
+  alert('Template download would trigger here:\nAttendance_Template_NCBA.xlsx\n\nColumns: Participant Name | Participant Email Address | Hours Attained');
+}
+
+function submitNext(){
+  if(submitStep===1 && !trainingMode) return;
+  if(submitStep<4){ submitStep++; renderSubmitStep(); }
+  else showSubmitSuccess();
+}
+function submitBack(){ if(submitStep>1){ submitStep--; renderSubmitStep(); } }
+
+function showSubmitSuccess(){
+  const ap = approverById(selectedApproverId);
+  document.getElementById('content-area').innerHTML=`
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;">
+    <div style="width:80px;height:80px;background:var(--med-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:20px;">✅</div>
+    <div style="font-family:'Outfit',sans-serif;font-size:26px;font-weight:700;color:var(--cocoa);margin-bottom:8px;">Submitted Successfully!</div>
+    <div style="color:var(--text-muted);font-size:14px;max-width:440px;margin-bottom:8px;">
+      ${trainingMode==='group'
+        ? 'Group training record submitted. Hours will be attributed to 18 participants upon approval.'
+        : 'Your training record has been submitted.'}
+    </div>
+    <div style="color:var(--text-muted);font-size:13px;margin-bottom:6px;">Routed to <strong>${ap.name || 'your approver'}</strong> for review</div>
+    <div style="background:var(--sky-soft);border-radius:8px;padding:8px 20px;font-size:13px;color:var(--sky-dark);font-weight:600;margin-bottom:28px;">Reference: SUB-009</div>
+    <div style="display:flex;gap:12px;">
+      <button class="btn btn-secondary" onclick="showScreen('history')">View My Submissions</button>
+      <button class="btn btn-primary" onclick="renderSubmit()">Submit Another</button>
+    </div>
+  </div>`;
+}
+
+// ─── SCREEN: MY SUBMISSIONS ────────────────────────────
+function renderHistory(){
+  const mine = mySubmissions();
+  document.getElementById('content-area').innerHTML=`
+  <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;">
+    ${['All','Approved','Pending','Returned','Rejected'].map(s=>`<button class="btn btn-secondary btn-sm" style="${s==='All'?'background:var(--cocoa);color:white;border-color:var(--cocoa);':''}">${s}</button>`).join('')}
+    <input type="text" class="form-input" placeholder="Search…" style="width:220px;padding:7px 12px;margin-left:auto;">
+    <button class="btn btn-primary btn-sm" onclick="showScreen('submit')">+ New Submission</button>
+  </div>
+  <div class="card">
+    <table class="data-table">
+      <thead><tr><th>Ref</th><th>Training</th><th>Date</th><th>Hrs</th><th>Type</th><th>Approver</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        ${mine.map(s=>{
+          const ap=approverById(s.approverId);
+          return `<tr>
+            <td class="text-muted" style="font-size:12px;">${s.id}</td>
+            <td>
+              <div style="font-weight:500;">${s.name}</div>
+              <div style="font-size:11px;color:var(--text-muted);">${s.group?'👥 Group':'👤 Individual'}</div>
+            </td>
+            <td class="text-muted">${s.date}</td>
+            <td><strong>${s.hours}h</strong>${s.participants?`<div style="font-size:10px;color:var(--text-muted);">${s.participants} pax</div>`:''}</td>
+            <td><span class="chip chip-info" style="font-size:11px;">${s.type}</span></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div class="avatar" style="width:24px;height:24px;font-size:9px;">${ap.initials}</div>
+                <span style="font-size:12px;">${ap.name.split(' ')[0]}</span>
+              </div>
+            </td>
+            <td>${statusChip(s.status)}</td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showDetail('${s.id}')">View</button></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function showDetail(id){
+  const s=SUBMISSIONS.find(x=>x.id===id); if(!s) return;
+  const ap=approverById(s.approverId);
+  document.getElementById('content-area').innerHTML=`
+  <button class="btn btn-secondary btn-sm mb-16" onclick="showScreen('history')">← Back</button>
+  <div class="grid-12">
+    <div>
+      <div class="card mb-16">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <div style="font-family:'Outfit',sans-serif;font-size:17px;font-weight:700;color:var(--cocoa);margin-bottom:3px;">${s.name}</div>
+            <div style="font-size:12px;color:var(--text-muted);">${s.id} · ${s.date}</div>
+          </div>${statusChip(s.status)}
+        </div>
+        ${s.group?`<div class="alert alert-group" style="margin-bottom:14px;">👥 Group Training — ${s.participants||'—'} participants · Hours auto-attributed by email</div>`:''}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          ${[['Type',s.group?'Group / Branch':'Individual'],['Training Source',s.type],['Duration',s.hours+' hours'],['Competency',s.competency],['Cost',s.cost>0?'KES '+s.cost.toLocaleString():'No cost'],['Approver',ap.name]].map(([k,v])=>`
+          <div style="background:var(--bg);border-radius:8px;padding:10px 12px;">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;">${k}</div>
+            <div style="font-size:13px;font-weight:500;">${v}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      ${s.status==='returned'?`<div style="background:var(--passion-soft);border:1px solid rgba(159,25,126,.2);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-weight:600;color:var(--passion);margin-bottom:4px;">↩ Returned by Approver</div>
+        <div style="font-size:13px;color:var(--text-secondary);">"Please attach signed register — the certificate alone is insufficient for a group training."</div>
+        <div style="margin-top:10px;display:flex;gap:8px;"><button class="btn btn-primary btn-sm">Resubmit</button><button class="btn btn-secondary btn-sm">Message Approver</button></div>
+      </div>`:''}
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title mb-16">Approval Timeline</div>
+        <div class="timeline">
+          ${[
+            {dot:'sky', title:'Submitted', meta:`${s.submittedBy} · ${s.date}`},
+            {dot:'sky', title:'Routed to '+ap.name, meta:'Automated routing'},
+            {dot:s.status==='approved'?'med':s.status==='returned'?'coral':'muted', title:s.status==='approved'?'Approved by '+ap.name:s.status==='returned'?'Returned for correction':s.status==='rejected'?'Rejected':'Awaiting review', meta:s.status!=='pending'?'Decision recorded':'Pending'},
+            ...(s.status==='approved'?[{dot:'med',title:'L&D Validation',meta:'Grace Mwangi'},{dot:'med',title:'Posted to Ledger',meta:'Hours recorded ✓'}]:[])
+          ].map((t,i,arr)=>`
+          <div class="timeline-item">
+            <div class="timeline-line-col"><div class="tl-dot ${t.dot}"></div>${i<arr.length-1?'<div class="tl-connector"></div>':''}</div>
+            <div class="tl-content"><div class="tl-title">${t.title}</div><div class="tl-meta">${t.meta}</div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SCREEN: COMPETENCIES ──────────────────────────────
+function renderCompetencies(){
+  const comps=[
+    {name:'Digital Literacy',score:80,target:80,hours:24,status:'achieved'},
+    {name:'Financial Acumen',score:75,target:80,hours:16,status:'in-progress'},
+    {name:'Leadership & Management',score:60,target:80,hours:12,status:'in-progress'},
+    {name:'Customer Centricity',score:40,target:80,hours:6,status:'gap'},
+    {name:'Risk & Compliance',score:90,target:80,hours:3,status:'achieved'},
+    {name:'Innovation & Creativity',score:85,target:80,hours:8,status:'achieved'},
+    {name:'Communication & Influence',score:35,target:80,hours:0,status:'gap'},
+    {name:'Operational Excellence',score:20,target:80,hours:0,status:'gap'},
+  ];
+  document.getElementById('content-area').innerHTML=`
+  <div class="kpi-grid">
+    <div class="kpi-card med"><div class="kpi-icon med">🏆</div><div class="kpi-label">Achieved</div><div class="kpi-value">3/8</div></div>
+    <div class="kpi-card sky"><div class="kpi-icon sky">⏳</div><div class="kpi-label">In Progress</div><div class="kpi-value">2</div></div>
+    <div class="kpi-card coral"><div class="kpi-icon coral">⚠</div><div class="kpi-label">Gaps</div><div class="kpi-value">3</div></div>
+    <div class="kpi-card passion"><div class="kpi-icon passion">⭐</div><div class="kpi-label">Overall Score</div><div class="kpi-value">61%</div></div>
+  </div>
+  <div class="grid-21">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Competency Progress</div>
+        <div style="display:flex;gap:8px;font-size:11px;">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:var(--med);border-radius:2px;display:inline-block;"></span>Achieved</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:var(--sky);border-radius:2px;display:inline-block;"></span>In Progress</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:var(--coral);border-radius:2px;display:inline-block;"></span>Gap</span>
+        </div>
+      </div>
+      ${comps.map(c=>`
+      <div class="comp-bar">
+        <div class="comp-header">
+          <span class="comp-name">${c.name}</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:var(--text-muted);">${c.hours}h logged</span>
+            <span style="font-size:12px;font-weight:600;color:${c.status==='achieved'?'var(--med)':c.status==='in-progress'?'var(--sky)':'var(--coral)'};">${c.score}%</span>
+          </div>
+        </div>
+        <div style="position:relative;height:8px;background:var(--border);border-radius:4px;">
+          <div style="height:100%;width:${c.score}%;background:${c.status==='achieved'?'var(--med)':c.status==='in-progress'?'var(--sky)':'var(--coral)'};border-radius:4px;"></div>
+          <div style="position:absolute;top:-2px;left:${c.target}%;width:2px;height:12px;background:var(--cocoa);border-radius:1px;" title="Target"></div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div>
+      <div class="card mb-16">
+        <div class="card-title mb-12">Competency Radar</div>
+        <div style="position:relative;height:230px;"><canvas id="radarChart" role="img" aria-label="Competency radar">Competency radar.</canvas></div>
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>{
+    if(document.getElementById('radarChart')){
+      new Chart(document.getElementById('radarChart'),{type:'radar',data:{labels:['Digital','Finance','Leadership','Customer','Risk','Innovation','Comms','Ops'],datasets:[{label:'Current',data:[80,75,60,40,90,85,35,20],backgroundColor:'rgba(58,179,229,.15)',borderColor:'#3AB3E5',pointBackgroundColor:'#3AB3E5',pointRadius:4},{label:'Target',data:[80,80,80,80,80,80,80,80],backgroundColor:'rgba(0,168,169,.05)',borderColor:'rgba(0,168,169,.4)',borderDash:[5,3],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:100,ticks:{stepSize:25,font:{size:9}},grid:{color:'rgba(0,0,0,.06)'},angleLines:{color:'rgba(0,0,0,.06)'},pointLabels:{font:{size:10}}}}}});
+    }
+  },50);
+}
+
+// ─── SCREEN: TEAM DASHBOARD (Dept Head) ───────────────
+function renderTeamDashboard(){
+  document.getElementById('content-area').innerHTML=`
+  <div class="alert alert-info mb-16">
+    <strong>📈 Team Oversight View</strong> — As a Department Head, this dashboard shows your team's learning progress. Individual submissions are managed by each employee under their own profile.
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi-card sky"><div class="kpi-icon sky">👥</div><div class="kpi-label">Team Members</div><div class="kpi-value">${DEPT_MEMBERS.length}</div><div class="kpi-sub">Retail Banking</div></div>
+    <div class="kpi-card med"><div class="kpi-icon med">✅</div><div class="kpi-label">Compliant</div><div class="kpi-value">${DEPT_MEMBERS.filter(m=>m.status==='compliant').length}</div><div class="kpi-sub">≥ 40hrs achieved</div></div>
+    <div class="kpi-card coral"><div class="kpi-icon coral">⚠</div><div class="kpi-label">At Risk</div><div class="kpi-value">${DEPT_MEMBERS.filter(m=>m.status==='at-risk').length}</div><div class="kpi-sub">Below 50% of target</div></div>
+    <div class="kpi-card passion"><div class="kpi-icon passion">📊</div><div class="kpi-label">Dept Compliance</div><div class="kpi-value">72%</div><div class="kpi-sub">Target: 80%</div></div>
+  </div>
+
+  <div class="grid-21 mb-16">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Team Learning Hours — 2025 YTD</div><button class="btn btn-secondary btn-sm">📥 Export</button></div>
+      <div style="position:relative;height:220px;"><canvas id="teamChart" role="img" aria-label="Team hours bar chart">Team hours chart.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Compliance Status</div></div>
+      <div style="position:relative;height:180px;"><canvas id="complianceChart" role="img" aria-label="Compliance status donut">Compliance donut chart.</canvas></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:12px;display:flex;flex-direction:column;gap:5px;">
+        ${[['Compliant (≥40h)','var(--med)',3],['On Track (50-99%)','var(--sky)',2],['At Risk (<50%)','var(--coral)',3]].map(([l,c,n])=>`
+        <div style="display:flex;justify-content:space-between;"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:${c};display:inline-block;"></span>${l}</span><strong>${n}</strong></div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div class="card-title">Team Member Progress</div></div>
+    <table class="data-table">
+      <thead><tr><th>Employee</th><th>Department</th><th>Hours YTD</th><th>Progress</th><th>Status</th><th>Pending Approvals</th></tr></thead>
+      <tbody>
+        ${DEPT_MEMBERS.map(m=>{
+          const pct=Math.min(Math.round((m.hours/m.target)*100),100);
+          const stColor=m.status==='compliant'?'var(--med)':m.status==='on-track'?'var(--sky)':'var(--coral)';
+          const stLabel=m.status==='compliant'?'✓ Compliant':m.status==='on-track'?'On Track':'⚠ At Risk';
+          return `<tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="avatar" style="width:28px;height:28px;font-size:10px;">${m.name.split(' ').map(w=>w[0]).join('')}</div>
+                <div>
+                  <div style="font-weight:500;font-size:13px;">${m.name}</div>
+                  <div style="font-size:11px;color:var(--text-muted);">${m.email}</div>
+                </div>
+              </div>
+            </td>
+            <td class="text-muted" style="font-size:12px;">${m.dept}</td>
+            <td><strong>${m.hours}h</strong> <span style="font-size:11px;color:var(--text-muted);">/ ${m.target}h</span></td>
+            <td style="width:160px;">
+              <div class="progress-bar"><div class="progress-fill ${m.status==='compliant'?'med':m.status==='on-track'?'sky':'coral'}" style="width:${pct}%;"></div></div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${pct}%</div>
+            </td>
+            <td><span style="font-size:12px;font-weight:600;color:${stColor};">${stLabel}</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">—</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+  setTimeout(()=>{
+    if(document.getElementById('teamChart')){
+      new Chart(document.getElementById('teamChart'),{type:'bar',data:{labels:DEPT_MEMBERS.map(m=>m.name.split(' ')[0]),datasets:[{label:'Hours',data:DEPT_MEMBERS.map(m=>m.hours),backgroundColor:DEPT_MEMBERS.map(m=>m.status==='compliant'?'#00A8A9':m.status==='on-track'?'#3AB3E5':'#E4032C'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.04)'},max:60},x:{grid:{display:false}}}}});
+    }
+    if(document.getElementById('complianceChart')){
+      new Chart(document.getElementById('complianceChart'),{type:'doughnut',data:{labels:['Compliant','On Track','At Risk'],datasets:[{data:[3,2,3],backgroundColor:['#00A8A9','#3AB3E5','#E4032C'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'62%'}});
+    }
+  },50);
+}
+
+// ─── SCREEN: VALIDATION QUEUE (L&D) ───────────────────
+function renderValidationQueue(){
+  const approved=SUBMISSIONS.filter(s=>s.status==='approved');
+  document.getElementById('content-area').innerHTML=`
+  <div class="kpi-grid mb-16">
+    <div class="kpi-card sky"><div class="kpi-icon sky">📋</div><div class="kpi-label">In Queue</div><div class="kpi-value">8</div></div>
+    <div class="kpi-card med"><div class="kpi-icon med">✅</div><div class="kpi-label">Validated Today</div><div class="kpi-value">12</div></div>
+    <div class="kpi-card passion"><div class="kpi-icon passion">📤</div><div class="kpi-label">Ledger Posts</div><div class="kpi-value">234</div></div>
+    <div class="kpi-card coral"><div class="kpi-icon coral">⚠</div><div class="kpi-label">Exceptions</div><div class="kpi-value">3</div></div>
+  </div>
+  <div class="tabs">
+    <div class="tab active">📥 Pending Validation (8)</div>
+    <div class="tab">👥 Group Submissions (4)</div>
+    <div class="tab">🖥 LMS Imports (6)</div>
+    <div class="tab">⚠ Exceptions (3)</div>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-bottom:14px;align-items:center;">
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-success btn-sm">✓ Bulk Approve</button>
+      <button class="btn btn-danger btn-sm">↩ Bulk Return</button>
+    </div>
+    <input type="text" class="form-input" placeholder="Search…" style="width:200px;padding:7px 12px;">
+  </div>
+  <div class="card">
+    <table class="data-table">
+      <thead><tr><th><input type="checkbox"></th><th>Employee</th><th>Training</th><th>Type</th><th>Hrs</th><th>Approver</th><th>Evidence</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${approved.map(s=>{
+          const ap=approverById(s.approverId);
+          return `<tr>
+            <td><input type="checkbox"></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="avatar" style="width:28px;height:28px;font-size:10px;">${s.submittedBy.split(' ').map(w=>w[0]).join('')}</div>
+                <div>
+                  <div style="font-weight:500;font-size:13px;">${s.submittedBy}</div>
+                  <div style="font-size:11px;color:var(--text-muted);">${s.dept}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div style="font-size:13px;">${s.name}</div>
+              ${s.group?`<span class="chip chip-group" style="font-size:10px;margin-top:3px;">👥 ${s.participants} participants</span>`:''}
+            </td>
+            <td><span class="chip chip-info" style="font-size:11px;">${s.type}</span></td>
+            <td><strong>${s.hours}h</strong></td>
+            <td style="font-size:12px;">${ap.name}</td>
+            <td><span style="color:var(--med);font-weight:600;">✓ PDF</span></td>
+            <td><div style="display:flex;gap:5px;"><button class="btn btn-success btn-sm">Post</button><button class="btn btn-danger btn-sm">↩</button></div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+// ─── SCREEN: LMS UPLOAD ───────────────────────────────
+function renderLmsUpload(){
+  document.getElementById('content-area').innerHTML=`
+  <div style="max-width:700px;margin:0 auto;">
+    <div class="card mb-16">
+      <div class="card-title mb-16">Upload LMS Completion Report</div>
+      <div class="form-group">
+        <label class="form-label">Reporting Period</label>
+        <div class="grid-2" style="gap:10px;"><input type="date" class="form-input" value="2025-05-01"><input type="date" class="form-input" value="2025-05-31"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">LMS Platform</label>
+        <select class="form-select"><option>Cornerstone OnDemand</option><option>Moodle</option><option>SAP SuccessFactors</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Upload File</label>
+        <div class="upload-zone" onclick="showLmsPreview()">
+          <div class="upload-zone-icon">📤</div>
+          <div class="upload-zone-text" style="font-weight:600;">Drop LMS export here or click to browse</div>
+          <div class="upload-zone-hint">Accepts .CSV or .XLSX · Max 25MB</div>
+          <button class="btn btn-secondary btn-sm" style="margin-top:12px;" onclick="event.stopPropagation();showLmsPreview()">Browse Files</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="showLmsPreview()">→ Validate & Preview</button>
+    </div>
+    <div class="card" id="lms-preview" style="display:none;">
+      <div class="card-header"><div class="card-title">Import Preview</div><span class="chip chip-approved">✓ 248 valid</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+        ${[['248','Valid Records','var(--med-light)','#007b7c'],['7','Errors','var(--coral-light)','var(--coral)'],['12','Warnings','var(--sun-soft)','#8a7500'],['1,842','Total Hours','var(--sky-soft)','var(--sky-dark)']].map(([v,l,bg,c])=>`
+        <div style="background:${bg};border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:${c};">${v}</div><div style="font-size:11px;color:${c};">${l}</div></div>`).join('')}
+      </div>
+      <div class="alert alert-warn"><strong>⚠ 7 records need attention:</strong><ul style="padding-left:16px;margin-top:6px;line-height:1.8;"><li>3 records: Staff ID not in HR directory</li><li>2 records: Future completion date</li><li>2 records: Missing competency mapping</li></ul></div>
+      <div style="display:flex;gap:10px;"><button class="btn btn-primary" style="flex:1;">✅ Confirm Import (248 records)</button><button class="btn btn-secondary">📥 Error Report</button></div>
+    </div>
+  </div>`;
+}
+function showLmsPreview(){ const el=document.getElementById('lms-preview'); if(el){el.style.display='block';el.scrollIntoView({behavior:'smooth'});}}
+
+// ─── SCREEN: ATTENDEE UPLOAD (L&D) ────────────────────
+function renderAttendeeUpload(){
+  document.getElementById('content-area').innerHTML=`
+  <div style="max-width:700px;margin:0 auto;">
+    <div class="card">
+      <div class="card-title mb-16">Upload L&D Attendee List</div>
+      <div class="grid-2 mb-16">
+        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Programme Name <span class="required">*</span></label><input type="text" class="form-input" placeholder="e.g. Leadership Fundamentals Cohort 4"></div>
+        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Training Date <span class="required">*</span></label><input type="date" class="form-input" value="2025-05-28"></div>
+        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Duration (Hours) <span class="required">*</span></label><input type="number" class="form-input" value="8" step=".5"></div>
+        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Mode</label><select class="form-select"><option>In-Person</option><option>Virtual</option><option>Blended</option></select></div>
+        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Competency <span class="required">*</span></label><select class="form-select"><option>Leadership & Management</option><option>Financial Acumen</option><option>Digital Literacy</option></select></div>
+        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Facilitator</label><input type="text" class="form-input" placeholder="Facilitator name"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Attendee List <span class="required">*</span></label>
+        <a href="#" style="display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--sky-dark);background:var(--sky-soft);text-decoration:none;margin-bottom:10px;">📥 Download Template</a>
+        <div class="upload-zone"><div class="upload-zone-icon">📋</div><div class="upload-zone-text">Upload signed attendance register</div><div class="upload-zone-hint">.XLSX or .CSV · Columns: Staff ID, Full Name, Department, Signature</div></div>
+      </div>
+      <button class="btn btn-primary btn-full">→ Validate & Create Records</button>
+    </div>
+  </div>`;
+}
+
+// ─── SCREEN: ANALYTICS ────────────────────────────────
+function renderAnalytics(){
+  document.getElementById('content-area').innerHTML=`
+  <div class="kpi-grid mb-16">
+    <div class="kpi-card sky"><div class="kpi-icon sky">📚</div><div class="kpi-label">Total Hours YTD</div><div class="kpi-value">14,823</div><div class="kpi-sub"><span class="kpi-trend-up">↑ 18%</span> vs 2024</div></div>
+    <div class="kpi-card med"><div class="kpi-icon med">💰</div><div class="kpi-label">Training Investment</div><div class="kpi-value">KES 4.2M</div><div class="kpi-sub">Budget utilised: 68%</div></div>
+    <div class="kpi-card passion"><div class="kpi-icon passion">✅</div><div class="kpi-label">Compliance Rate</div><div class="kpi-value">82%</div><div class="kpi-sub">Target: 80% ✓</div></div>
+    <div class="kpi-card coral"><div class="kpi-icon coral">👥</div><div class="kpi-label">Active Learners</div><div class="kpi-value">1,248</div><div class="kpi-sub">of 1,520 staff</div></div>
+  </div>
+  <div class="grid-21 mb-16">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Learning Hours Trend</div><div class="card-subtitle">2024 vs 2025</div></div></div>
+      <div style="position:relative;height:220px;"><canvas id="trendChart" role="img" aria-label="Trend chart">Trend.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Training Type Mix</div></div>
+      <div style="position:relative;height:180px;"><canvas id="typeChart" role="img" aria-label="Type mix">Type mix.</canvas></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:10px;display:flex;flex-direction:column;gap:5px;">
+        ${[['External',42,'#3AB3E5'],['L&D-Led',28,'#00A8A9'],['Group/Branch',18,'#9F197E'],['eLearning',12,'#F8E200']].map(([l,v,c])=>`
+        <div style="display:flex;justify-content:space-between;"><span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:${c};display:inline-block;"></span>${l}</span><strong>${v}%</strong></div>`).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="card mb-16">
+    <div class="card-header"><div><div class="card-title">Department Compliance Heatmap</div><div class="card-subtitle">% of employees meeting 40hr target — 2025 YTD</div></div></div>
+    <div id="heatmap"></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Cost by Department</div></div>
+      <div style="position:relative;height:230px;"><canvas id="costChart" role="img" aria-label="Cost chart">Cost.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Competency Coverage</div></div>
+      ${[['Risk & Compliance',96],['Financial Acumen',88],['Leadership',82],['Digital Literacy',74],['Customer Centricity',67],['Innovation',55],['Communication',71],['Ops Excellence',63]].map(([d,v])=>`
+      <div class="comp-bar">
+        <div class="comp-header"><span class="comp-name">${d}</span><span style="font-size:12px;font-weight:600;color:${v>=80?'var(--med)':v>=65?'var(--sky)':'var(--coral)'};">${v}%</span></div>
+        <div class="progress-bar" style="height:5px;"><div class="progress-fill ${v>=80?'med':v>=65?'sky':'coral'}" style="width:${v}%;"></div></div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+
+  // Heatmap
+  const depts=['Retail Banking','Digital Banking','SME Banking','Treasury','Risk & Compliance','HR & People'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let hm=`<div style="overflow-x:auto;"><div style="display:grid;grid-template-columns:140px repeat(12,1fr);gap:3px;min-width:600px;">
+    <div></div>${months.map(m=>`<div style="text-align:center;font-size:11px;color:var(--text-muted);font-weight:600;">${m}</div>`).join('')}
+    ${depts.map(d=>`<div style="font-size:12px;font-weight:500;display:flex;align-items:center;padding-right:6px;color:var(--text-secondary);">${d}</div>`+
+      months.map(()=>{const v=Math.floor(Math.random()*55+45);const bg=v>=80?`rgba(0,168,169,${(v/100).toFixed(2)})`:v>=60?`rgba(58,179,229,${(v/100).toFixed(2)})`:`rgba(228,3,44,${0.15+(v/200).toFixed(2)})`;const tc=v>=70?'#007b7c':v>=50?'var(--sky-dark)':'var(--coral)';return `<div style="height:26px;background:${bg};border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:${tc};">${v}%</div>`;}).join('')
+    ).join('')}
+  </div></div>`;
+  document.getElementById('heatmap').innerHTML=hm;
+
+  setTimeout(()=>{
+    if(document.getElementById('trendChart')){new Chart(document.getElementById('trendChart'),{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],datasets:[{label:'2025',data:[1820,2100,1950,2380,2573],borderColor:'#3AB3E5',backgroundColor:'rgba(58,179,229,.06)',fill:true,tension:.4,pointRadius:4,pointBackgroundColor:'#3AB3E5'},{label:'2024',data:[1420,1680,1590,1960,2100,2200,2050,2400,1900,2300,2100,2500],borderColor:'rgba(159,25,126,.5)',backgroundColor:'transparent',fill:false,tension:.4,pointRadius:3,borderDash:[5,3],pointBackgroundColor:'#9F197E'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.04)'}},x:{grid:{display:false}}}}});}
+    if(document.getElementById('typeChart')){new Chart(document.getElementById('typeChart'),{type:'doughnut',data:{labels:['External','L&D-Led','Group','eLearning'],datasets:[{data:[42,28,18,12],backgroundColor:['#3AB3E5','#00A8A9','#9F197E','#F8E200'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'62%'}});}
+    if(document.getElementById('costChart')){new Chart(document.getElementById('costChart'),{type:'bar',data:{labels:['Retail','Digital','SME','Treasury','Risk','HR'],datasets:[{label:'KES 000',data:[1240,820,480,620,180,360],backgroundColor:'#9F197E',borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>v+'K'}},x:{grid:{display:false}}}}});}
+  },50);
+}
+
+// ─── SCREEN: AUDIT TRAIL ──────────────────────────────
+function renderAuditTrail(){
+  const events=[
+    {dot:'sky',icon:'📝',action:'Submission Created',user:'Amara Kamau',detail:'SUB-009 · Advanced Excel · 8hrs · Individual',time:'28 May 2025, 14:32'},
+    {dot:'sky',icon:'🤖',action:'Auto-Routed to Approver',user:'System',detail:'Routed to David Ochieng via Power Automate',time:'28 May 2025, 14:33'},
+    {dot:'med',icon:'✅',action:'Group Submission Approved',user:'David Ochieng',detail:'SUB-005 · Customer Service Bootcamp · 18 participants',time:'28 May 2025, 09:15'},
+    {dot:'med',icon:'📌',action:'Posted to Learning Ledger',user:'Grace Mwangi',detail:'18 participant records attributed via email match',time:'27 May 2025, 16:40'},
+    {dot:'coral',icon:'↩',action:'Submission Returned',user:'David Ochieng',detail:'SUB-004 · "Evidence insufficient"',time:'27 May 2025, 11:22'},
+    {dot:'sky',icon:'⬆️',action:'LMS Import Completed',user:'Grace Mwangi',detail:'248 records from Cornerstone · 1,842 hrs posted',time:'26 May 2025, 09:05'},
+  ];
+  document.getElementById('content-area').innerHTML=`
+  <div style="display:flex;gap:10px;margin-bottom:18px;align-items:center;flex-wrap:wrap;">
+    <input type="text" class="form-input" placeholder="Search audit log…" style="width:260px;padding:8px 14px;">
+    <select class="form-select" style="width:160px;"><option>All Actions</option><option>Approvals</option><option>Rejections</option><option>System</option></select>
+    <input type="date" class="form-input" style="width:150px;">
+    <button class="btn btn-secondary btn-sm ml-auto">📥 Export</button>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Audit Log</div><span class="chip chip-info">127 events this month</span></div>
+    <div class="timeline" style="padding:8px 0;">
+      ${events.map((e,i,arr)=>`
+      <div class="timeline-item">
+        <div class="timeline-line-col">
+          <div class="tl-dot ${e.dot}"></div>
+          ${i<arr.length-1?'<div class="tl-connector"></div>':''}
+        </div>
+        <div class="tl-content">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span>${e.icon}</span><span class="tl-title">${e.action}</span>
+            <span style="font-size:11px;color:var(--text-muted);margin-left:auto;">${e.time}</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;"><strong>${e.user}</strong> — ${e.detail}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div style="text-align:center;padding:14px;border-top:1px solid var(--border);"><button class="btn btn-secondary btn-sm">Load more</button></div>
+  </div>`;
+}
+
+// ─── SCREEN: NOTIFICATIONS ────────────────────────────
+function renderNotifications(){
+  const notifs=[
+    {icon:'✅',bg:'var(--med-light)',title:'Submission Approved',sub:'Your submission "Design Thinking Workshop" was approved by David Ochieng.',time:'2h ago',unread:true},
+    {icon:'↩',bg:'var(--passion-soft)',title:'Submission Returned',sub:'Your submission "Excel Advanced Analytics" was returned. Please update the evidence.',time:'1d ago',unread:true},
+    {icon:'👥',bg:'#f0eaff',title:'Group Training Posted',sub:'Customer Service Bootcamp hours have been attributed to 18 participants\' profiles.',time:'1d ago',unread:true},
+    {icon:'⚠️',bg:'var(--sun-soft)',title:'SLA Reminder',sub:'3 submissions are awaiting approval and approaching the 48-hour review window.',time:'2d ago',unread:false},
+    {icon:'🎓',bg:'var(--med-light)',title:'Competency Milestone',sub:'Congratulations! You have achieved the "Digital Literacy" competency target.',time:'3d ago',unread:false},
+  ];
+  document.getElementById('content-area').innerHTML=`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary btn-sm" style="background:var(--cocoa);color:white;border-color:var(--cocoa);">All</button>
+      <button class="btn btn-secondary btn-sm">Unread (3)</button>
+      <button class="btn btn-secondary btn-sm">Approvals</button>
+    </div>
+    <button class="btn btn-secondary btn-sm">Mark all read</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    ${notifs.map(n=>`
+    <div class="notif-item ${n.unread?'unread':''}">
+      <div class="notif-avatar" style="background:${n.bg};">${n.icon}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:${n.unread?'600':'400'};">${n.title}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${n.sub}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);flex-shrink:0;">${n.time}</div>
+    </div>`).join('')}
+  </div>`;
+}
+</script>
+</body>
+</html>
