@@ -416,7 +416,7 @@ h1,h2,h3,h4,h5{font-family:'Outfit',sans-serif}
       <div class="user-pill">
         <div class="avatar" id="nav-avatar">AK</div>
         <div style="flex:1;min-width:0;">
-          <div class="user-name" id="nav-username">Amara Kamau</div>
+          <div class="user-name" id="nav-username">Sabina Ojil</div>
           <div class="user-dept" id="nav-dept">Retail Banking</div>
         </div>
         <div style="color:rgba(255,255,255,.3);font-size:12px;" onclick="logout()">⏏</div>
@@ -436,7 +436,7 @@ h1,h2,h3,h4,h5{font-family:'Outfit',sans-serif}
         <div class="icon-btn">❓</div>
         <div style="display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;">
           <div class="avatar" style="width:28px;height:28px;font-size:11px;" id="topbar-avatar">AK</div>
-          <span style="font-size:13px;font-weight:500;" id="topbar-username">Amara Kamau</span>
+          <span style="font-size:13px;font-weight:500;" id="topbar-username">Sabina Ojil</span>
         </div>
       </div>
     </div>
@@ -463,17 +463,17 @@ const APPROVERS = [
 ];
 
 const SUBMISSIONS = [
-  { id:'SUB-001', name:'Design Thinking Workshop',     type:'External', trainingType:'individual', date:'2025-05-10', hours:8,  competency:'Innovation & Creativity',  cost:45000, status:'approved',  approverId:'DO', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
-  { id:'SUB-002', name:'Financial Modelling Masterclass', type:'External', trainingType:'individual', date:'2025-05-18', hours:16, competency:'Financial Acumen', cost:85000, status:'pending',  approverId:'DO', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
-  { id:'SUB-003', name:'Leadership Fundamentals',      type:'L&D-Led',  trainingType:'individual', date:'2025-04-22', hours:12, competency:'Leadership & Management',  cost:0,     status:'approved',  approverId:'DO', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
-  { id:'SUB-004', name:'Excel Advanced Analytics',     type:'Dept-Led', trainingType:'individual', date:'2025-04-08', hours:4,  competency:'Digital Literacy',         cost:0,     status:'returned',  approverId:'SW', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
+  { id:'SUB-001', name:'Design Thinking Workshop',     type:'External', trainingType:'individual', date:'2025-05-10', hours:8,  competency:'Innovation & Creativity',  cost:45000, status:'approved',  approverId:'DO', submittedBy:'Sabina Ojil',  dept:'Retail Banking', group:false },
+  { id:'SUB-002', name:'Financial Modelling Masterclass', type:'External', trainingType:'individual', date:'2025-05-18', hours:16, competency:'Financial Acumen', cost:85000, status:'pending',  approverId:'DO', submittedBy:'Sabina Ojil',  dept:'Retail Banking', group:false },
+  { id:'SUB-003', name:'Leadership Fundamentals',      type:'L&D-Led',  trainingType:'individual', date:'2025-04-22', hours:12, competency:'Leadership & Management',  cost:0,     status:'approved',  approverId:'DO', submittedBy:'Sabina Ojil',  dept:'Retail Banking', group:false },
+  { id:'SUB-004', name:'Excel Advanced Analytics',     type:'Dept-Led', trainingType:'individual', date:'2025-04-08', hours:4,  competency:'Digital Literacy',         cost:0,     status:'returned',  approverId:'SW', submittedBy:'Sabina Ojil',  dept:'Retail Banking', group:false },
   { id:'SUB-005', name:'Customer Service Bootcamp',    type:'External', trainingType:'group',      date:'2025-04-18', hours:6,  competency:'Customer Centricity',      cost:120000,status:'approved',  approverId:'DO', submittedBy:'Faith Njeri',   dept:'Digital Banking', group:true, participants:14 },
   { id:'SUB-006', name:'Risk Awareness Workshop',      type:'L&D-Led',  trainingType:'group',      date:'2025-03-28', hours:4,  competency:'Risk & Compliance',        cost:0,     status:'approved',  approverId:'MO', submittedBy:'Brian Muthoni', dept:'Risk & Compliance', group:true, participants:22 },
-  { id:'SUB-007', name:'Python for Banking Analytics', type:'External', trainingType:'individual', date:'2025-05-25', hours:24, competency:'Digital Literacy',         cost:120000,status:'pending',  approverId:'DO', submittedBy:'Amara Kamau',  dept:'Retail Banking', group:false },
+  { id:'SUB-007', name:'Python for Banking Analytics', type:'External', trainingType:'individual', date:'2025-05-25', hours:24, competency:'Digital Literacy',         cost:120000,status:'pending',  approverId:'DO', submittedBy:'Sabina Ojil',  dept:'Retail Banking', group:false },
 ];
 
 const DEPT_MEMBERS = [
-  { name:'Amara Kamau',   email:'sabina.ojil@ncbagroup.com',    hours:39, target:40, status:'on-track',  dept:'Retail Banking' },
+  { name:'Sabina Ojil',   email:'sabina.ojil@ncbagroup.com',    hours:39, target:40, status:'on-track',  dept:'Retail Banking' },
   { name:'Brian Muthoni', email:'brian.muthoni@ncbagroup.com',  hours:28, target:40, status:'at-risk',   dept:'Retail Banking' },
   { name:'Carol Omondi',  email:'carol.omondi@ncbagroup.com',   hours:45, target:40, status:'compliant', dept:'Retail Banking' },
   { name:'Diana Njeri',   email:'diana.njeri@ncbagroup.com',    hours:32, target:40, status:'on-track',  dept:'Retail Banking' },
@@ -511,7 +511,7 @@ function logout() {
 
 // ─── Role Profiles ────────────────────────────────────
 const PROFILES = {
-  employee_staff: { name:'Amara Kamau',  initials:'AK', dept:'Retail Banking', roleLabel:'Employee' },
+  employee_staff: { name:'Sabina Ojil',  initials:'AK', dept:'Retail Banking', roleLabel:'Employee' },
   employee_depthead: { name:'David Ochieng', initials:'DO', dept:'Retail Banking Head', roleLabel:'Dept Head' },
   ld: { name:'Grace Mwangi', initials:'GM', dept:'L&D Department', roleLabel:'L&D Administrator' },
 };
@@ -629,7 +629,7 @@ function statusChip(s) {
   return `<span class="chip ${cls}"><span class="chip-dot"></span>${lbl}</span>`;
 }
 function approverById(id) { return APPROVERS.find(a=>a.id===id) || {name:'—',role:'—',initials:'?'}; }
-function mySubmissions() { return SUBMISSIONS.filter(s=>s.submittedBy==='Amara Kamau'); }
+function mySubmissions() { return SUBMISSIONS.filter(s=>s.submittedBy==='Sabina Ojil'); }
 
 // ─── SCREEN: EMPLOYEE DASHBOARD ───────────────────────
 function renderDashboard() {
@@ -1516,7 +1516,7 @@ function renderAnalytics(){
 // ─── SCREEN: AUDIT TRAIL ──────────────────────────────
 function renderAuditTrail(){
   const events=[
-    {dot:'sky',icon:'📝',action:'Submission Created',user:'Amara Kamau',detail:'SUB-009 · Advanced Excel · 8hrs · Individual',time:'28 May 2025, 14:32'},
+    {dot:'sky',icon:'📝',action:'Submission Created',user:'Sabina Ojil',detail:'SUB-009 · Advanced Excel · 8hrs · Individual',time:'28 May 2025, 14:32'},
     {dot:'sky',icon:'🤖',action:'Auto-Routed to Approver',user:'System',detail:'Routed to David Ochieng via Power Automate',time:'28 May 2025, 14:33'},
     {dot:'med',icon:'✅',action:'Group Submission Approved',user:'David Ochieng',detail:'SUB-005 · Customer Service Bootcamp · 18 participants',time:'28 May 2025, 09:15'},
     {dot:'med',icon:'📌',action:'Posted to Learning Ledger',user:'Grace Mwangi',detail:'18 participant records attributed via email match',time:'27 May 2025, 16:40'},
